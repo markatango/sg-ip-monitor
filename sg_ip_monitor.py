@@ -50,6 +50,9 @@ CONFIG = {
     # All managed rules get this description.
     "rule_description": os.environ.get("SG_RULE_DESC", "sg-ip-monitor: auto-updated"),
 
+    # IAM profile to use when editing security group
+    "aws_profile": os.environ.get("AWS_PROFILE", "sg-ip-monitor"),
+
     # How often to check (seconds)
     "check_interval": int(os.environ.get("CHECK_INTERVAL", "30")),
 
@@ -94,7 +97,7 @@ def get_external_ip() -> str | None:
 # ─── SECURITY GROUP HELPERS ───────────────────────────────────────────────────
 
 def get_ec2_client():
-    session = boto3.Session(profile_name="sg-ip-monitor-user")
+    session = boto3.Session(profile_name=CONFIG["aws_profile"])
     return session.client("ec2", region_name=CONFIG["aws_region"])
 
 def describe_sg(ec2, sg_id: str) -> dict:
